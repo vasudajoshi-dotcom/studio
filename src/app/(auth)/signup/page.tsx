@@ -26,15 +26,18 @@ export default function SignupPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      console.log("Attempting to create user...");
+      console.log("--- Signup Flow Started ---");
+      
+      // 1. Create Account
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      console.log("User created successfully:", user.uid);
+      console.log("Step 1: User created successfully. UID:", user.uid);
       
-      // Update Auth Profile
+      // 2. Update Auth Profile
       await updateProfile(user, { displayName: name });
+      console.log("Step 2: Auth Profile updated with name:", name);
       
-      // Create Firestore Profile Document
+      // 3. Create Firestore Profile Document
       await setDoc(doc(db, 'users', user.uid), {
         fullName: name,
         email: email,
@@ -45,27 +48,30 @@ export default function SignupPage() {
         isInstructor: false,
         emailVerified: false,
       });
+      console.log("Step 3: Firestore user document created.");
       
-      console.log("Sending verification email...");
+      // 4. Send Verification Email - CRITICAL
+      console.log("Step 4: Requesting verification email for:", user.email);
       try {
         await sendEmailVerification(user);
-        console.log("Verification email sent successfully.");
+        console.log("RESULT: Verification email sent successfully to:", user.email);
         toast({
           title: "Account Created",
           description: "Verification email sent. Please check your inbox, spam, and updates folders.",
         });
       } catch (verifyError: any) {
-        console.error("Verification email failed:", verifyError);
+        console.error("RESULT: Verification email FAILED to send:", verifyError.message);
         toast({
           variant: "destructive",
           title: "Verification Failed",
-          description: "Account created, but we couldn't send the verification email. You can resend it on the next page.",
+          description: `Account created, but we couldn't send the email: ${verifyError.message}`,
         });
       }
       
+      console.log("--- Signup Flow Completed ---");
       router.push('/verify-email');
     } catch (error: any) {
-      console.error("Signup failure:", error);
+      console.error("CRITICAL: Signup process aborted due to error:", error.message);
       toast({
         variant: "destructive",
         title: "Sign up Failed",

@@ -1,9 +1,8 @@
-
 "use client";
 
 import AppLayout from '@/components/layout/app-layout';
 import { useAuth } from '@/context/auth-context';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, Award, BookOpen, Clock, Zap, Loader2, ArrowRight } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
@@ -32,15 +31,15 @@ export default function DashboardPage() {
     );
   }
 
-  // Use Firestore name first, then Auth display name, then generic
-  const name = profile?.fullName?.split(' ')[0] || user?.displayName?.split(' ')[0] || 'Professional';
+  // Purely dynamic greeting
+  const firstName = profile?.fullName?.split(' ')[0] || user?.displayName?.split(' ')[0] || 'Professional';
 
   return (
     <AppLayout>
       <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-headline font-bold">Good morning, {name}</h1>
+            <h1 className="text-3xl font-headline font-bold">Good morning, {firstName}</h1>
             <p className="text-muted-foreground">Your career journey is looking promising today.</p>
           </div>
           <Link href="/roadmap">
@@ -100,7 +99,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-primary-foreground/80 leading-relaxed">
-                Based on your profile, users with your interests are currently trending towards <strong>Full Stack Architecture</strong>. Consider starting the "Advanced React Patterns" module to boost your score.
+                Based on your profile, we've identified key growth areas. Check your <strong>Skill Gap Analysis</strong> to see which modules will boost your score the fastest.
               </p>
               <Link href="/courses">
                 <Button className="w-full bg-accent hover:bg-accent/90 border-none font-bold">
