@@ -22,22 +22,27 @@ const skillData = [
 export default function DashboardPage() {
   const { profile, user, loading } = useAuth();
 
+  // If auth is loading, show the full page loader
   if (loading) {
     return (
       <AppLayout>
-        <div className="flex items-center justify-center h-full min-h-[400px]">
+        <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-accent" />
+          <p className="text-sm text-muted-foreground animate-pulse">Synchronizing your professional profile...</p>
         </div>
       </AppLayout>
     );
   }
 
-  const firstName = profile?.fullName?.split(' ')[0] || user?.displayName?.split(' ')[0] || 'Professional';
-  const isVerified = user?.emailVerified;
+  // Handle case where user isn't found (should be handled by AuthProvider redirect, but safety first)
+  if (!user) return null;
+
+  const firstName = profile?.fullName?.split(' ')[0] || user.displayName?.split(' ')[0] || 'Professional';
+  const isVerified = user.emailVerified;
 
   return (
     <AppLayout>
-      <div className="space-y-8">
+      <div className="space-y-8 animate-in fade-in duration-500">
         {!isVerified && (
           <Alert variant="default" className="bg-amber-50 border-amber-200 text-amber-800">
             <Mail className="h-4 w-4 text-amber-600" />
@@ -57,7 +62,7 @@ export default function DashboardPage() {
             <p className="text-muted-foreground">Your career journey is looking promising today.</p>
           </div>
           <Link href="/roadmap">
-            <Button className="bg-secondary hover:bg-secondary/90 shadow-lg">
+            <Button className="bg-secondary hover:bg-secondary/90 shadow-lg font-bold">
               <Plus className="mr-2 h-4 w-4" /> New Roadmap
             </Button>
           </Link>
@@ -107,11 +112,14 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="shadow-md bg-primary text-white">
+          <Card className="shadow-md bg-primary text-white overflow-hidden relative">
+             <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Zap className="h-32 w-32" />
+             </div>
             <CardHeader>
               <CardTitle className="text-lg font-headline">AI Insight</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 relative z-10">
               <p className="text-primary-foreground/80 leading-relaxed">
                 Based on your profile, we've identified key growth areas. Check your <strong>Skill Gap Analysis</strong> to see which modules will boost your score the fastest.
               </p>

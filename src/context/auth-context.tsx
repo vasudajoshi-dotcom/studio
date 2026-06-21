@@ -47,28 +47,54 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
+    console.time("Auth-State-Init");
     const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
+      console.timeEnd("Auth-State-Init");
       setUser(currentUser);
       
       if (currentUser) {
-        // Real-time listener for user profile data
+        console.time("Profile-Fetch");
         const profileRef = doc(db, 'users', currentUser.uid);
+        
+        // Use a timeout to ensure we don't block indefinitely on profile fetch
+        const profileTimeout = setTimeout(() => {
+          if (loading) {
+            console.warn("Profile fetch took too long, using fallback.");
+            setLoading(false);
+          }
+        }, 3000);
+
         const unsubscribeProfile = onSnapshot(profileRef, (docSnap) => {
+          clearTimeout(profileTimeout);
+          console.timeEnd("Profile-Fetch");
+          
           if (docSnap.exists()) {
             setProfile(docSnap.data() as UserProfile);
           } else {
-            setProfile(null);
+            console.log("No Firestore profile found, using Auth defaults.");
+            // Create a temporary profile object from Auth data
+            setProfile({
+              fullName: currentUser.displayName || 'Professional',
+              email: currentUser.email || '',
+              creditPoints: 0,
+              skillScore: 0,
+              isInstructor: false,
+              emailVerified: currentUser.emailVerified,
+              photoURL: currentUser.photoURL || undefined
+            });
           }
+          setLoading(false);
+        }, (error) => {
+          console.error("Firestore listener error:", error);
+          clearTimeout(profileTimeout);
           setLoading(false);
         });
 
-        // Email verification is now optional - no blocking redirects
+        // Basic redirect logic: If on landing, login or signup, go to dashboard
         const publicPaths = ['/login', '/signup', '/reset-password', '/'];
-        const isPublicPath = publicPaths.includes(pathname);
-
-        // If user is on a public path (like home) and is logged in, redirect to dashboard
-        if (isPublicPath && pathname === '/') {
-           // Stay on landing if they want, but usually redirect
+        if (publicPaths.includes(pathname) && pathname !== '/') {
+           console.log("Redirecting to dashboard...");
+           router.push('/dashboard');
         }
 
         return () => unsubscribeProfile();
@@ -78,6 +104,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         const publicPaths = ['/login', '/signup', '/reset-password', '/'];
         if (!publicPaths.includes(pathname)) {
+          console.log("Unauthenticated access to protected route, redirecting to login.");
           router.push('/login');
         }
       }
@@ -91,9 +118,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.push('/login');
   };
 
+  // Prevent blank screen by always rendering a fallback loader if loading takes too long
   return (
     <AuthContext.Provider value={{ user, profile, loading, logout, refreshUser }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

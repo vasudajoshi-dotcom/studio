@@ -23,22 +23,30 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    console.time("Login-Execution");
     try {
       console.log("Attempting login...");
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
-      // Force reload to get the latest status
+      // Force reload to get latest metadata
       await reload(userCredential.user);
+      
+      console.timeEnd("Login-Execution");
       console.log("Login successful. UID:", userCredential.user.uid);
 
-      // Mandatory verification disabled: always push to dashboard
+      toast({
+        title: "Welcome back!",
+        description: "Successfully logged in.",
+      });
+
       router.push('/dashboard');
     } catch (error: any) {
+      console.timeEnd("Login-Execution");
       console.error("Login failure:", error);
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: error.message,
+        description: error.message || "Invalid credentials. Please try again.",
       });
     } finally {
       setLoading(false);
@@ -67,6 +75,7 @@ export default function LoginPage() {
                 placeholder="name@example.com" 
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
                 required 
               />
             </div>
@@ -82,6 +91,7 @@ export default function LoginPage() {
                   value={password} 
                   onChange={(e) => setPassword(e.target.value)}
                   className="pr-10"
+                  autoComplete="current-password"
                   required 
                 />
                 <Button
@@ -101,11 +111,11 @@ export default function LoginPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full font-semibold" disabled={loading}>
+            <Button type="submit" className="w-full font-semibold h-11" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Logging in...
+                  Authenticating...
                 </>
               ) : "Login"}
             </Button>
