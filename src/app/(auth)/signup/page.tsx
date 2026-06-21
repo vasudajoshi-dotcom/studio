@@ -37,10 +37,10 @@ export default function SignupPage() {
         console.log("Verification email sent successfully.");
         toast({
           title: "Account Created",
-          description: "A verification email has been sent. Please check your inbox.",
+          description: "Verification email sent. Please check your inbox, spam, promotions, and updates folders.",
         });
       } catch (verifyError: any) {
-        console.error("Verification email failure:", verifyError);
+        console.error("Verification email failed:", verifyError);
         toast({
           variant: "destructive",
           title: "Verification Failed",

@@ -32,7 +32,7 @@ export default function VerifyEmailPage() {
       console.log("Resend successful.");
       toast({
         title: "Email Sent",
-        description: "A new verification link has been sent to your email address.",
+        description: "A new verification link has been sent. Please check your inbox, spam, and other folders.",
       });
     } catch (error: any) {
       console.error("Resend failure:", error);
