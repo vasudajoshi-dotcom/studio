@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -51,7 +50,7 @@ export default function ProfilePage() {
               <div className="relative">
                 <Avatar className="h-32 w-32 border-4 border-white shadow-2xl">
                   <AvatarImage src={user?.photoURL || ""} />
-                  <AvatarFallback className="text-4xl">{user?.displayName?.charAt(0)}</AvatarFallback>
+                  <AvatarFallback className="text-4xl">{user?.displayName?.charAt(0) || user?.email?.charAt(0)}</AvatarFallback>
                 </Avatar>
                 {user?.emailVerified && (
                   <div className="absolute bottom-2 right-2 bg-green-500 rounded-full p-1.5 border-4 border-white">
@@ -61,10 +60,10 @@ export default function ProfilePage() {
               </div>
               <div className="flex-1 pb-2">
                 <div className="flex items-center gap-3">
-                  <h1 className="text-3xl font-headline font-bold">{user?.displayName || 'Alex Johnson'}</h1>
+                  <h1 className="text-3xl font-headline font-bold">{user?.displayName || 'SkillSphere Professional'}</h1>
                   <Badge className="bg-secondary/10 text-secondary border-secondary/20">verified</Badge>
                 </div>
-                <p className="text-muted-foreground font-medium">Aspiring Cloud Architect @ MIT</p>
+                <p className="text-muted-foreground font-medium">{user?.email}</p>
                 <div className="flex gap-4 mt-3">
                   <span className="text-xs font-bold text-accent px-2 py-1 bg-accent/10 rounded">850 Credits</span>
                   <span className="text-xs font-bold text-secondary px-2 py-1 bg-secondary/10 rounded">Skill Score: 92</span>
@@ -102,7 +101,7 @@ export default function ProfilePage() {
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <p className="text-sm leading-relaxed text-muted-foreground">
-                      Passionate software engineer focused on cloud-native solutions and AI integration. Currently pursuing my degree in Computer Science while building scalable web applications.
+                      Passionate professional focused on cloud-native solutions and AI integration. Building scalable web applications and mastering modern tech stacks.
                     </p>
                     <div className="space-y-3">
                       <Label className="font-bold">Core Skills</Label>
@@ -125,31 +124,29 @@ export default function ProfilePage() {
                       <Github className="h-5 w-5 text-foreground" />
                       <div className="text-xs">
                         <p className="font-bold">GitHub</p>
-                        <p className="text-muted-foreground">/alexjohnson-dev</p>
+                        <p className="text-muted-foreground">Profile Link</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 rounded-lg border bg-muted/20">
                       <Linkedin className="h-5 w-5 text-blue-600" />
                       <div className="text-xs">
                         <p className="font-bold">LinkedIn</p>
-                        <p className="text-muted-foreground">/in/alexjohnson</p>
+                        <p className="text-muted-foreground">Professional Link</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 rounded-lg border bg-muted/20">
                       <LinkIcon className="h-5 w-5 text-secondary" />
                       <div className="text-xs">
                         <p className="font-bold">Portfolio</p>
-                        <p className="text-muted-foreground">alexjohnson.me</p>
+                        <p className="text-muted-foreground">Personal Site</p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
               </TabsContent>
-              {/* Other tabs content would go here... */}
             </Tabs>
           </div>
 
-          {/* Sidebar Stats */}
           <div className="space-y-6">
             <Card className="border-none shadow-sm">
               <CardHeader className="pb-2">

@@ -1,6 +1,7 @@
 "use client";
 
 import AppLayout from '@/components/layout/app-layout';
+import { useAuth } from '@/context/auth-context';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -15,15 +16,17 @@ import {
   Award
 } from 'lucide-react';
 
-const rankings = [
-  { id: 1, name: "Sarah Chen", role: "AI Engineer", score: 9820, credits: 4200, trend: 'up', avatar: "https://picsum.photos/seed/sarah/100/100", rank: 1 },
-  { id: 2, name: "Marcus Aurelius", role: "Cloud Architect", score: 9450, credits: 3850, trend: 'up', avatar: "https://picsum.photos/seed/marcus/100/100", rank: 2 },
-  { id: 3, name: "Elena Rodriguez", role: "UX Director", score: 9120, credits: 2900, trend: 'down', avatar: "https://picsum.photos/seed/elena/100/100", rank: 3 },
-  { id: 4, name: "Kevin Zhang", role: "Data Scientist", score: 8850, credits: 3100, trend: 'up', avatar: "https://picsum.photos/seed/kevin/100/100", rank: 4 },
-  { id: 5, name: "Alex Johnson", role: "Product Manager", score: 8200, credits: 850, trend: 'up', avatar: "https://picsum.photos/seed/alex/100/100", rank: 24, isUser: true },
-];
-
 export default function LeaderboardPage() {
+  const { user } = useAuth();
+  
+  const rankings = [
+    { id: 1, name: "Sarah Chen", role: "AI Engineer", score: 9820, credits: 4200, trend: 'up', avatar: "https://picsum.photos/seed/sarah/100/100", rank: 1 },
+    { id: 2, name: "Marcus Aurelius", role: "Cloud Architect", score: 9450, credits: 3850, trend: 'up', avatar: "https://picsum.photos/seed/marcus/100/100", rank: 2 },
+    { id: 3, name: "Elena Rodriguez", role: "UX Director", score: 9120, credits: 2900, trend: 'down', avatar: "https://picsum.photos/seed/elena/100/100", rank: 3 },
+    { id: 4, name: "Kevin Zhang", role: "Data Scientist", score: 8850, credits: 3100, trend: 'up', avatar: "https://picsum.photos/seed/kevin/100/100", rank: 4 },
+    { id: 5, name: user?.displayName || "SkillSphere User", role: "Professional", score: 8200, credits: 850, trend: 'up', avatar: user?.photoURL || "https://picsum.photos/seed/user/100/100", rank: 24, isUser: true },
+  ];
+
   return (
     <AppLayout>
       <div className="space-y-8">
@@ -126,29 +129,29 @@ export default function LeaderboardPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  {rankings.map((user) => (
-                    <tr key={user.id} className={user.isUser ? "bg-accent/5 border-l-4 border-l-accent" : "hover:bg-muted/10 transition-colors"}>
+                  {rankings.map((userItem) => (
+                    <tr key={userItem.id} className={userItem.isUser ? "bg-accent/5 border-l-4 border-l-accent" : "hover:bg-muted/10 transition-colors"}>
                       <td className="px-6 py-4">
-                        <span className={`font-bold ${user.rank <= 3 ? "text-accent" : "text-muted-foreground"}`}>
-                          #{user.rank}
+                        <span className={`font-bold ${userItem.rank <= 3 ? "text-accent" : "text-muted-foreground"}`}>
+                          #{userItem.rank}
                         </span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <Avatar className="h-9 w-9 border">
-                            <AvatarImage src={user.avatar} />
-                            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                            <AvatarImage src={userItem.avatar} />
+                            <AvatarFallback>{userItem.name.charAt(0)}</AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="text-sm font-bold">{user.name} {user.isUser && <span className="text-[10px] bg-accent text-white px-1.5 py-0.5 rounded ml-1">You</span>}</p>
-                            <p className="text-[10px] text-muted-foreground">{user.role}</p>
+                            <p className="text-sm font-bold">{userItem.name} {userItem.isUser && <span className="text-[10px] bg-accent text-white px-1.5 py-0.5 rounded ml-1">You</span>}</p>
+                            <p className="text-[10px] text-muted-foreground">{userItem.role}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 font-bold text-sm">{user.score}</td>
+                      <td className="px-6 py-4 font-bold text-sm">{userItem.score}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-1 text-xs font-medium">
-                          <Zap className="h-3 w-3 text-secondary fill-secondary" /> {user.credits}
+                          <Zap className="h-3 w-3 text-secondary fill-secondary" /> {userItem.credits}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -158,9 +161,9 @@ export default function LeaderboardPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-right">
-                         <div className={`inline-flex items-center gap-1 text-[10px] font-bold ${user.trend === 'up' ? "text-green-600" : "text-red-600"}`}>
-                           {user.trend === 'up' ? <ArrowUp className="h-3 w-3" /> : <TrendingUp className="h-3 w-3 rotate-180" />}
-                           {user.trend === 'up' ? "3 pos" : "1 pos"}
+                         <div className={`inline-flex items-center gap-1 text-[10px] font-bold ${userItem.trend === 'up' ? "text-green-600" : "text-red-600"}`}>
+                           {userItem.trend === 'up' ? <ArrowUp className="h-3 w-3" /> : <TrendingUp className="h-3 w-3 rotate-180" />}
+                           {userItem.trend === 'up' ? "3 pos" : "1 pos"}
                          </div>
                       </td>
                     </tr>
@@ -178,7 +181,7 @@ export default function LeaderboardPage() {
               <Target className="h-12 w-12 text-accent" />
             </div>
             <div className="flex-1 space-y-2 text-center md:text-left">
-              <h3 className="text-2xl font-headline font-bold">You're in the top 5% of Product Managers!</h3>
+              <h3 className="text-2xl font-headline font-bold">You're in the top 5% of Professionals!</h3>
               <p className="text-primary-foreground/80 leading-relaxed">
                 Complete the "Stakeholder Management" assessment to potentially jump 8 ranks and enter the Global Top 20.
               </p>

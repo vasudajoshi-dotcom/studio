@@ -1,6 +1,7 @@
 "use client";
 
 import AppLayout from '@/components/layout/app-layout';
+import { useAuth } from '@/context/auth-context';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -43,12 +44,15 @@ const marketDemand = [
 ];
 
 export default function DashboardPage() {
+  const { user } = useAuth();
+  const firstName = user?.displayName?.split(' ')[0] || 'User';
+
   return (
     <AppLayout>
       <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-headline font-bold">Good morning, Alex</h1>
+            <h1 className="text-3xl font-headline font-bold">Good morning, {firstName}</h1>
             <p className="text-muted-foreground">Your career journey is looking promising today.</p>
           </div>
           <Button className="bg-secondary hover:bg-secondary/90 shadow-lg">
