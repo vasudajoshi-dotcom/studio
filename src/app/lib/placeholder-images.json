@@ -1,0 +1,28 @@
+{
+  "placeholderImages": [
+    {
+      "id": "course-ai",
+      "description": "AI Product Management Masterclass",
+      "imageUrl": "https://picsum.photos/seed/course1/600/400",
+      "imageHint": "educational technology"
+    },
+    {
+      "id": "course-cloud",
+      "description": "Advanced Cloud Architecture",
+      "imageUrl": "https://picsum.photos/seed/course2/600/400",
+      "imageHint": "cloud computing"
+    },
+    {
+      "id": "user-avatar-1",
+      "description": "Sarah Chen Professional Avatar",
+      "imageUrl": "https://picsum.photos/seed/user1/100/100",
+      "imageHint": "professional avatar"
+    },
+    {
+      "id": "user-avatar-2",
+      "description": "Marcus Aurelius Professional Avatar",
+      "imageUrl": "https://picsum.photos/seed/user2/100/100",
+      "imageHint": "professional avatar"
+    }
+  ]
+}

@@ -14,14 +14,13 @@ import {
   LogOut, 
   Target,
   Zap,
-  CheckCircle2,
   TrendingUp,
-  Rocket
+  Rocket,
+  Trophy
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Progress } from '@/components/ui/progress';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -37,6 +36,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     { name: 'Career Roadmap', icon: Map, href: '/roadmap' },
     { name: 'Skill Gap Analysis', icon: Zap, href: '/gap-analysis' },
     { name: 'Course Marketplace', icon: BookOpen, href: '/courses' },
+    { name: 'Credit Wallet', icon: Zap, href: '/credits' },
+    { name: 'Leaderboard', icon: Trophy, href: '/leaderboard' },
   ];
 
   const milestones = [
@@ -73,10 +74,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <span className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full border-2 border-background"></span>
             </Button>
             <div className="flex items-center gap-3">
-              <Avatar className="h-9 w-9 border">
-                <AvatarImage src={user?.photoURL || ""} />
-                <AvatarFallback>{user?.displayName?.charAt(0) || user?.email?.charAt(0)}</AvatarFallback>
-              </Avatar>
+              <Link href="/profile">
+                <Avatar className="h-9 w-9 border cursor-pointer hover:ring-2 hover:ring-accent transition-all">
+                  <AvatarImage src={user?.photoURL || ""} />
+                  <AvatarFallback>{user?.displayName?.charAt(0) || user?.email?.charAt(0)}</AvatarFallback>
+                </Avatar>
+              </Link>
               <div className="hidden lg:block text-sm">
                 <p className="font-medium leading-none">{user?.displayName || 'User'}</p>
                 <p className="text-muted-foreground text-xs mt-1">Premium Member</p>
@@ -186,7 +189,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <p className="text-sm text-primary-foreground/80 leading-relaxed mb-4">
               Users with your profile often transition into <strong>Product Leadership</strong> roles within 18 months by focusing on Stakeholder Management.
             </p>
-            <Button className="w-full bg-accent hover:bg-accent/90 border-none">Explore Strategy</Button>
+            <Link href="/roadmap">
+              <Button className="w-full bg-accent hover:bg-accent/90 border-none">Explore Strategy</Button>
+            </Link>
           </div>
         </aside>
 
