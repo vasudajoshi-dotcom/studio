@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useAuth } from '@/context/auth-context';
@@ -35,6 +36,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     { name: 'Feed', icon: Home, href: '/feed' },
   ];
 
+  const displayName = profile?.fullName || user?.displayName || 'SkillSphere Pro';
+
   return (
     <div className="min-h-screen bg-background">
       {/* Top Header */}
@@ -50,19 +53,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="relative">
+            <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-primary">
               <Bell className="h-5 w-5" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full border border-white"></span>
             </Button>
             <div className="flex items-center gap-3">
               <Link href="/profile">
-                <Avatar className="h-9 w-9 border cursor-pointer hover:ring-2 hover:ring-accent transition-all">
-                  <AvatarImage src={profile?.photoURL || ""} />
-                  <AvatarFallback>{profile?.fullName?.charAt(0) || <UserIcon className="h-4 w-4" />}</AvatarFallback>
+                <Avatar className="h-9 w-9 border cursor-pointer hover:ring-2 hover:ring-accent transition-all bg-white">
+                  <AvatarImage src={profile?.photoURL || user?.photoURL || ""} />
+                  <AvatarFallback>{displayName.charAt(0)}</AvatarFallback>
                 </Avatar>
               </Link>
               <div className="hidden lg:block text-sm">
-                <p className="font-bold leading-none">{profile?.fullName || user?.displayName || 'SkillSphere Pro'}</p>
+                <p className="font-bold leading-none">{displayName}</p>
                 <p className="text-muted-foreground text-[10px] mt-1 uppercase tracking-widest">Active Member</p>
               </div>
             </div>

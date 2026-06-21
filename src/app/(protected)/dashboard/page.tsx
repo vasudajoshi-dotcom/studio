@@ -1,11 +1,13 @@
+
 "use client";
 
 import AppLayout from '@/components/layout/app-layout';
 import { useAuth } from '@/context/auth-context';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Award, BookOpen, Clock, Zap, Loader2 } from 'lucide-react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar } from 'recharts';
+import { Plus, Award, BookOpen, Clock, Zap, Loader2, ArrowRight } from 'lucide-react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import Link from 'next/link';
 
 const skillData = [
   { name: 'Mon', score: 65 },
@@ -18,19 +20,20 @@ const skillData = [
 ];
 
 export default function DashboardPage() {
-  const { profile, loading } = useAuth();
+  const { profile, user, loading } = useAuth();
 
   if (loading) {
     return (
       <AppLayout>
-        <div className="flex items-center justify-center h-full">
+        <div className="flex items-center justify-center h-full min-h-[400px]">
           <Loader2 className="h-8 w-8 animate-spin text-accent" />
         </div>
       </AppLayout>
     );
   }
 
-  const name = profile?.fullName?.split(' ')[0] || 'Professional';
+  // Use Firestore name first, then Auth display name, then generic
+  const name = profile?.fullName?.split(' ')[0] || user?.displayName?.split(' ')[0] || 'Professional';
 
   return (
     <AppLayout>
@@ -40,18 +43,20 @@ export default function DashboardPage() {
             <h1 className="text-3xl font-headline font-bold">Good morning, {name}</h1>
             <p className="text-muted-foreground">Your career journey is looking promising today.</p>
           </div>
-          <Button className="bg-secondary hover:bg-secondary/90 shadow-lg">
-            <Plus className="mr-2 h-4 w-4" /> New Achievement
-          </Button>
+          <Link href="/roadmap">
+            <Button className="bg-secondary hover:bg-secondary/90 shadow-lg">
+              <Plus className="mr-2 h-4 w-4" /> New Roadmap
+            </Button>
+          </Link>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: 'Skill Score', value: profile?.skillScore || '0', icon: Award, trend: 'Top 10%', color: 'text-purple-600' },
-            { label: 'Credits', value: profile?.creditPoints || '0', icon: Zap, trend: '+10', color: 'text-yellow-600' },
-            { label: 'Courses', value: '0', icon: BookOpen, trend: '0 active', color: 'text-teal-600' },
-            { label: 'Study Time', value: '0 hrs', icon: Clock, trend: 'New', color: 'text-blue-600' },
+            { label: 'Skill Score', value: profile?.skillScore || '0', icon: Award, trend: 'Global Rank', color: 'text-purple-600' },
+            { label: 'Credits', value: profile?.creditPoints || '0', icon: Zap, trend: 'Lifetime', color: 'text-yellow-600' },
+            { label: 'Courses', value: '0', icon: BookOpen, trend: 'Active', color: 'text-teal-600' },
+            { label: 'Study Time', value: '0 hrs', icon: Clock, trend: 'Weekly', color: 'text-blue-600' },
           ].map((stat, i) => (
             <Card key={i} className="shadow-sm border-none bg-white">
               <CardContent className="p-6">
@@ -95,9 +100,13 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-primary-foreground/80 leading-relaxed">
-                Based on your profile, users with similar skills are currently trending towards <strong>Full Stack Architecture</strong>. Consider starting the "Advanced React Patterns" module.
+                Based on your profile, users with your interests are currently trending towards <strong>Full Stack Architecture</strong>. Consider starting the "Advanced React Patterns" module to boost your score.
               </p>
-              <Button className="w-full bg-accent hover:bg-accent/90 border-none font-bold">Start Learning</Button>
+              <Link href="/courses">
+                <Button className="w-full bg-accent hover:bg-accent/90 border-none font-bold">
+                  Start Learning <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </div>
