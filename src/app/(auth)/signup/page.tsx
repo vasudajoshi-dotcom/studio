@@ -25,19 +25,32 @@ export default function SignupPage() {
     e.preventDefault();
     setLoading(true);
     try {
+      console.log("Attempting to create user...");
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      console.log("User created successfully:", userCredential.user.uid);
+      
       await updateProfile(userCredential.user, { displayName: name });
       
-      // Send verification email
-      await sendEmailVerification(userCredential.user);
-      
-      toast({
-        title: "Account Created",
-        description: "A verification email has been sent. Please check your inbox.",
-      });
+      try {
+        console.log("Sending verification email...");
+        await sendEmailVerification(userCredential.user);
+        console.log("Verification email sent successfully.");
+        toast({
+          title: "Account Created",
+          description: "A verification email has been sent. Please check your inbox.",
+        });
+      } catch (verifyError: any) {
+        console.error("Verification email failure:", verifyError);
+        toast({
+          variant: "destructive",
+          title: "Verification Failed",
+          description: "Account created, but we couldn't send the verification email. You can resend it on the next page.",
+        });
+      }
       
       router.push('/verify-email');
     } catch (error: any) {
+      console.error("Signup failure:", error);
       toast({
         variant: "destructive",
         title: "Sign up Failed",

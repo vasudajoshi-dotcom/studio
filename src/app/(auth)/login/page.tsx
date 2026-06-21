@@ -24,10 +24,12 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
+      console.log("Attempting login...");
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
       // Force reload to get the latest emailVerified status
       await reload(userCredential.user);
+      console.log("Login successful. Email verified:", userCredential.user.emailVerified);
 
       if (!userCredential.user.emailVerified) {
         toast({
@@ -39,6 +41,7 @@ export default function LoginPage() {
         router.push('/dashboard');
       }
     } catch (error: any) {
+      console.error("Login failure:", error);
       toast({
         variant: "destructive",
         title: "Login Failed",
