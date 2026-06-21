@@ -4,9 +4,10 @@ import AppLayout from '@/components/layout/app-layout';
 import { useAuth } from '@/context/auth-context';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Award, BookOpen, Clock, Zap, Loader2, ArrowRight } from 'lucide-react';
+import { Plus, Award, BookOpen, Clock, Zap, Loader2, ArrowRight, AlertCircle, Mail } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import Link from 'next/link';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const skillData = [
   { name: 'Mon', score: 65 },
@@ -31,12 +32,25 @@ export default function DashboardPage() {
     );
   }
 
-  // Purely dynamic greeting
   const firstName = profile?.fullName?.split(' ')[0] || user?.displayName?.split(' ')[0] || 'Professional';
+  const isVerified = user?.emailVerified;
 
   return (
     <AppLayout>
       <div className="space-y-8">
+        {!isVerified && (
+          <Alert variant="default" className="bg-amber-50 border-amber-200 text-amber-800">
+            <Mail className="h-4 w-4 text-amber-600" />
+            <AlertTitle className="font-bold">Email verification is optional</AlertTitle>
+            <AlertDescription className="text-sm">
+              You can explore the platform now. Verification can be completed later to unlock verified badges. 
+              <Link href="/verify-email" className="ml-2 font-bold underline hover:text-amber-900">
+                Verify now
+              </Link>
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-headline font-bold">Good morning, {firstName}</h1>

@@ -27,19 +27,12 @@ export default function LoginPage() {
       console.log("Attempting login...");
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
-      // Force reload to get the latest emailVerified status
+      // Force reload to get the latest status
       await reload(userCredential.user);
-      console.log("Login successful. Email verified:", userCredential.user.emailVerified);
+      console.log("Login successful. UID:", userCredential.user.uid);
 
-      if (!userCredential.user.emailVerified) {
-        toast({
-          title: "Verification Required",
-          description: "Please verify your email address to access your dashboard.",
-        });
-        router.push('/verify-email');
-      } else {
-        router.push('/dashboard');
-      }
+      // Mandatory verification disabled: always push to dashboard
+      router.push('/dashboard');
     } catch (error: any) {
       console.error("Login failure:", error);
       toast({

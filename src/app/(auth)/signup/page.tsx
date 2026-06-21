@@ -50,28 +50,24 @@ export default function SignupPage() {
       });
       console.log("Step 3: Firestore user document created.");
       
-      // 4. Send Verification Email - CRITICAL
-      console.log("Step 4: Requesting verification email for:", user.email);
+      // 4. Send Verification Email (Optional)
+      console.log("Step 4: Requesting verification email...");
       try {
         await sendEmailVerification(user);
-        console.log("RESULT: Verification email sent successfully to:", user.email);
+        console.log("RESULT: Verification email sent.");
         toast({
           title: "Account Created",
-          description: "Verification email sent. Please check your inbox, spam, and updates folders.",
+          description: "Verification email sent. You can verify later; redirecting to your dashboard.",
         });
       } catch (verifyError: any) {
-        console.error("RESULT: Verification email FAILED to send:", verifyError.message);
-        toast({
-          variant: "destructive",
-          title: "Verification Failed",
-          description: `Account created, but we couldn't send the email: ${verifyError.message}`,
-        });
+        console.warn("RESULT: Verification email failed to send, but account is created:", verifyError.message);
       }
       
       console.log("--- Signup Flow Completed ---");
-      router.push('/verify-email');
+      // Redirect to dashboard immediately - verification is optional
+      router.push('/dashboard');
     } catch (error: any) {
-      console.error("CRITICAL: Signup process aborted due to error:", error.message);
+      console.error("CRITICAL: Signup process aborted:", error.message);
       toast({
         variant: "destructive",
         title: "Sign up Failed",

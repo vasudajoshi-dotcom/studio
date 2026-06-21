@@ -62,15 +62,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setLoading(false);
         });
 
+        // Email verification is now optional - no blocking redirects
         const publicPaths = ['/login', '/signup', '/reset-password', '/'];
         const isPublicPath = publicPaths.includes(pathname);
-        const isVerifyPath = pathname === '/verify-email';
 
-        // Enforce email verification for protected routes
-        if (!currentUser.emailVerified && !isPublicPath && !isVerifyPath) {
-          router.push('/verify-email');
-        } else if (currentUser.emailVerified && isVerifyPath) {
-          router.push('/dashboard');
+        // If user is on a public path (like home) and is logged in, redirect to dashboard
+        if (isPublicPath && pathname === '/') {
+           // Stay on landing if they want, but usually redirect
         }
 
         return () => unsubscribeProfile();
