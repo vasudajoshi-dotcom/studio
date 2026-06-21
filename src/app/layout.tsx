@@ -1,7 +1,9 @@
+
 import type {Metadata} from 'next';
 import './globals.css';
 import { AuthProvider } from '@/context/auth-context';
 import { Toaster } from '@/components/ui/toaster';
+import AIAssistant from '@/components/ai/ai-assistant';
 
 export const metadata: Metadata = {
   title: 'SkillSphere AI | Career Architect & Learning Hub',
@@ -23,6 +25,7 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <AuthProvider>
           {children}
+          <AIAssistant />
           <Toaster />
         </AuthProvider>
       </body>
