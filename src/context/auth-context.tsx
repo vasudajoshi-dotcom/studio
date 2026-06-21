@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
@@ -41,58 +42,67 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const refreshUser = async () => {
     if (auth.currentUser) {
-      console.log("Refreshing Auth User...");
+      console.log("AuthProvider: Reloading current user...");
       await reload(auth.currentUser);
       setUser({ ...auth.currentUser });
     }
   };
 
   useEffect(() => {
-    console.time("Auth-State-Init");
     const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
-      console.timeEnd("Auth-State-Init");
+      // Basic state update
       setUser(currentUser);
       
       if (currentUser) {
-        console.time("Profile-Fetch");
-        const profileRef = doc(db, 'users', currentUser.uid);
-        
-        // Ensure the loading state is resolved even if profile fetch is slow
-        const profileTimeout = setTimeout(() => {
-          if (loading) {
-            console.warn("Profile fetch timeout, proceeding with Auth defaults.");
-            setLoading(false);
-          }
-        }, 5000);
+        // 1. Mandatory Reload to check real emailVerified status
+        try {
+          await reload(currentUser);
+          setUser({ ...auth.currentUser! });
+        } catch (e) {
+          console.error("Auth reload failed:", e);
+        }
 
+        const isVerified = auth.currentUser?.emailVerified;
+        const publicPaths = ['/login', '/signup', '/reset-password', '/'];
+        const isPublicPath = publicPaths.includes(pathname);
+
+        // 2. Mandatory Verification Check
+        if (!isVerified && !isPublicPath && pathname !== '/verify-email') {
+          console.log("Enforcement: User not verified, redirecting to verify-email");
+          router.push('/verify-email');
+          setLoading(false);
+          return;
+        }
+
+        // 3. Prevent verified users from seeing verification page
+        if (isVerified && pathname === '/verify-email') {
+          router.push('/dashboard');
+        }
+
+        // 4. Firestore Profile Fetch
+        const profileRef = doc(db, 'users', currentUser.uid);
         const unsubscribeProfile = onSnapshot(profileRef, (docSnap) => {
-          clearTimeout(profileTimeout);
-          console.timeEnd("Profile-Fetch");
-          
           if (docSnap.exists()) {
             setProfile(docSnap.data() as UserProfile);
           } else {
-            console.log("No Firestore profile found, fallback to Auth data.");
             setProfile({
               fullName: currentUser.displayName || 'Professional',
               email: currentUser.email || '',
               creditPoints: 0,
               skillScore: 0,
               isInstructor: false,
-              emailVerified: currentUser.emailVerified,
+              emailVerified: !!isVerified,
               photoURL: currentUser.photoURL || undefined
             });
           }
           setLoading(false);
         }, (error) => {
           console.error("Firestore Profile Error:", error);
-          clearTimeout(profileTimeout);
           setLoading(false);
         });
 
-        // Basic non-blocking redirect
-        const publicPaths = ['/login', '/signup', '/reset-password', '/'];
-        if (publicPaths.includes(pathname) && pathname !== '/') {
+        // Redirect logged-in verified users away from auth pages (except root)
+        if (isPublicPath && pathname !== '/' && isVerified) {
            router.push('/dashboard');
         }
 

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -18,6 +19,7 @@ export default function VerifyEmailPage() {
   const { toast } = useToast();
 
   useEffect(() => {
+    // If user is already verified and the app hasn't redirected yet, do it now
     if (!authLoading && user?.emailVerified) {
       router.push('/dashboard');
     }
@@ -26,19 +28,16 @@ export default function VerifyEmailPage() {
   const handleResend = async () => {
     if (!auth.currentUser) return;
     setResending(true);
-    console.log("Resending verification email to:", auth.currentUser.email);
     try {
       await sendEmailVerification(auth.currentUser);
-      console.log("Resend successful.");
       toast({
-        title: "Email Sent",
-        description: "A new verification link has been sent. Please check your inbox, spam, and folders.",
+        title: "Verification Sent",
+        description: "A new link has been sent to your email address.",
       });
     } catch (error: any) {
-      console.error("Resend failure:", error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Resend Failed",
         description: error.message || "Failed to resend email.",
       });
     } finally {
@@ -49,29 +48,30 @@ export default function VerifyEmailPage() {
   const handleRefresh = async () => {
     if (!auth.currentUser) return;
     setRefreshing(true);
-    console.log("Refreshing user verification status...");
     try {
+      // 1. Reload the user from Firebase Auth servers
+      await reload(auth.currentUser);
+      
+      // 2. Trigger AuthContext update
       await refreshUser();
-      console.log("User reloaded. Email verified:", auth.currentUser.emailVerified);
       
       if (auth.currentUser.emailVerified) {
         toast({
-          title: "Verified!",
-          description: "Your email has been successfully verified.",
+          title: "Email Verified!",
+          description: "Welcome to SkillSphere AI. Access granted.",
         });
         router.push('/dashboard');
       } else {
         toast({
           title: "Not Yet Verified",
-          description: "Please click the link in your email first. Check your spam folder if you don't see it.",
+          description: "We haven't received confirmation yet. Please check your inbox and click the link.",
         });
       }
     } catch (error: any) {
-      console.error("Refresh failure:", error);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to refresh status. Please try again.",
+        title: "Refresh Failed",
+        description: "Could not refresh account status. Please try again.",
       });
     } finally {
       setRefreshing(false);
@@ -93,23 +93,23 @@ export default function VerifyEmailPage() {
                 <Mail className="text-white h-7 w-7" />
              </div>
           </div>
-          <CardTitle className="text-2xl font-headline font-bold">Verify Your Email</CardTitle>
+          <CardTitle className="text-2xl font-headline font-bold">Action Required</CardTitle>
           <CardDescription>
-            We've sent a link to <span className="font-semibold text-primary">{user?.email || auth.currentUser?.email}</span>
+            You must verify your email <span className="font-semibold text-primary">{user?.email || auth.currentUser?.email}</span> to continue.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 pt-4 text-center">
           <div className="bg-muted/50 p-6 rounded-2xl flex flex-col items-center gap-4">
-            <CheckCircle2 className="h-10 w-10 text-green-500" />
+            <CheckCircle2 className="h-10 w-10 text-slate-300" />
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Please click the link in the email to activate your account. If you don't see it, check your spam or promotions folder.
+              Check your inbox (and spam/promotions) for a verification link. Click the link to unlock your dashboard.
             </p>
           </div>
           
           <div className="space-y-2">
             <Button 
-              variant="outline" 
-              className="w-full gap-2 font-semibold h-11" 
+              variant="default" 
+              className="w-full gap-2 font-semibold h-11 bg-accent hover:bg-accent/90" 
               onClick={handleRefresh}
               disabled={refreshing}
             >
@@ -117,7 +117,7 @@ export default function VerifyEmailPage() {
               I've verified my email
             </Button>
             <Button 
-              variant="ghost" 
+              variant="outline" 
               className="w-full gap-2 text-muted-foreground h-11" 
               onClick={handleResend}
               disabled={resending}
