@@ -1,4 +1,3 @@
-
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
@@ -14,10 +13,10 @@ const firebaseConfig = {
 };
 
 // Validate config presence
-const isConfigValid = !!firebaseConfig.apiKey && firebaseConfig.apiKey !== "your_api_key_here";
+const isConfigValid = !!firebaseConfig.apiKey && firebaseConfig.apiKey.length > 10;
 
 if (!isConfigValid && typeof window !== 'undefined') {
-  console.error("Firebase API Key is missing or invalid. Please check your .env file.");
+  console.warn("Firebase configuration is incomplete. Please ensure environment variables are loaded.");
 }
 
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
