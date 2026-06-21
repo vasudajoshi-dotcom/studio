@@ -1,8 +1,10 @@
+
 "use client";
 
 import { useState } from 'react';
 import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,17 +29,31 @@ export default function SignupPage() {
     try {
       console.log("Attempting to create user...");
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      console.log("User created successfully:", userCredential.user.uid);
+      const user = userCredential.user;
+      console.log("User created successfully:", user.uid);
       
-      await updateProfile(userCredential.user, { displayName: name });
+      // Update Auth Profile
+      await updateProfile(user, { displayName: name });
+      
+      // Create Firestore Profile Document
+      await setDoc(doc(db, 'users', user.uid), {
+        fullName: name,
+        email: email,
+        uid: user.uid,
+        creditPoints: 0,
+        skillScore: 0,
+        createdAt: serverTimestamp(),
+        isInstructor: false,
+        emailVerified: false,
+      });
       
       try {
         console.log("Sending verification email...");
-        await sendEmailVerification(userCredential.user);
+        await sendEmailVerification(user);
         console.log("Verification email sent successfully.");
         toast({
           title: "Account Created",
-          description: "Verification email sent. Please check your inbox, spam, promotions, and updates folders.",
+          description: "Verification email sent. Please check your inbox, spam, and updates folders.",
         });
       } catch (verifyError: any) {
         console.error("Verification email failed:", verifyError);
@@ -125,7 +141,7 @@ export default function SignupPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full font-semibold" disabled={loading}>
+            <Button type="submit" className="w-full font-semibold h-11" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -135,7 +151,7 @@ export default function SignupPage() {
             </Button>
             <p className="text-sm text-center text-muted-foreground">
               Already have an account?{" "}
-              <Link href="/login" id="login-link" className="text-secondary font-medium hover:underline">Login</Link>
+              <Link href="/login" id="login-link" className="text-secondary font-medium hover:underline transition-colors">Login</Link>
             </p>
           </CardFooter>
         </form>
