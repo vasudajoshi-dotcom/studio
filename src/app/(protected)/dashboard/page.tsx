@@ -11,7 +11,8 @@ import {
   Award, 
   BookOpen, 
   Users,
-  Briefcase
+  Briefcase,
+  Loader2
 } from 'lucide-react';
 import { 
   LineChart, 
@@ -44,8 +45,19 @@ const marketDemand = [
 ];
 
 export default function DashboardPage() {
-  const { user } = useAuth();
-  const firstName = user?.displayName?.split(' ')[0] || 'User';
+  const { user, profile, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center h-full">
+          <Loader2 className="h-8 w-8 animate-spin text-accent" />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  const firstName = profile?.fullName?.split(' ')[0] || user?.displayName?.split(' ')[0] || 'Professional';
 
   return (
     <AppLayout>
@@ -63,10 +75,10 @@ export default function DashboardPage() {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: 'Weekly Study Time', value: '12.5 hrs', icon: Clock, trend: '+12%', color: 'text-blue-600' },
-            { label: 'Skills Mastered', value: '24', icon: Award, trend: '+3', color: 'text-purple-600' },
+            { label: 'Skill Score', value: profile?.skillScore || '0', icon: Award, trend: 'Top 10%', color: 'text-purple-600' },
+            { label: 'Credits Earned', value: profile?.creditPoints || '0', icon: Zap, trend: '+10', color: 'text-yellow-600' },
             { label: 'Courses Active', value: '4', icon: BookOpen, trend: '2 ending', color: 'text-teal-600' },
-            { label: 'Mentor Contacts', value: '8', icon: Users, trend: '+1 new', color: 'text-indigo-600' },
+            { label: 'Study Time', value: '12.5 hrs', icon: Clock, trend: '+12%', color: 'text-blue-600' },
           ].map((stat, i) => (
             <Card key={i} className="shadow-sm border-none bg-white">
               <CardContent className="p-6">
