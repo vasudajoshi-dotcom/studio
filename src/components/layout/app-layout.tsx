@@ -15,7 +15,8 @@ import {
   Target,
   Zap,
   CheckCircle2,
-  TrendingUp
+  TrendingUp,
+  Rocket
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -52,7 +53,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-2 md:gap-8">
             <Link href="/dashboard" className="flex items-center gap-2">
               <div className="w-8 h-8 ai-gradient rounded-lg flex items-center justify-center">
-                <span className="text-white text-lg font-bold font-headline">S</span>
+                <Rocket className="text-white h-5 w-5" />
               </div>
               <span className="text-xl font-headline font-bold hidden sm:inline-block">SkillSphere AI</span>
             </Link>

@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
+import { Rocket } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -41,7 +42,7 @@ export default function LoginPage() {
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
              <div className="w-12 h-12 ai-gradient rounded-xl flex items-center justify-center">
-                <span className="text-white text-2xl font-bold font-headline">S</span>
+                <Rocket className="text-white h-7 w-7" />
              </div>
           </div>
           <CardTitle className="text-2xl font-headline font-bold">Welcome Back</CardTitle>

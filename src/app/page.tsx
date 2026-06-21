@@ -3,7 +3,7 @@
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Rocket } from 'lucide-react';
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -23,7 +23,7 @@ export default function Home() {
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center space-y-4">
         <div className="w-16 h-16 ai-gradient rounded-2xl mx-auto flex items-center justify-center animate-bounce">
-          <span className="text-white text-3xl font-bold font-headline">S</span>
+          <Rocket className="text-white h-9 w-9" />
         </div>
         <h1 className="text-2xl font-headline font-bold">SkillSphere AI</h1>
         <div className="flex items-center justify-center gap-2 text-muted-foreground">
