@@ -1,15 +1,14 @@
-
 "use client";
 
+import { useState, useEffect } from 'react';
 import AppLayout from '@/components/layout/app-layout';
 import { useAuth } from '@/context/auth-context';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { collection, query, orderBy, limit } from 'firebase/firestore';
+import { collection, query, orderBy, limit, onSnapshot, DocumentData } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { 
   Trophy, 
   Medal, 
@@ -23,15 +22,32 @@ import {
 
 export default function LeaderboardPage() {
   const { user } = useAuth();
-  
-  // Real Firestore Query for top users
-  const usersQuery = query(
-    collection(db, 'users'),
-    orderBy('skillScore', 'desc'),
-    limit(50)
-  );
-  
-  const [usersData, loading, error] = useCollectionData(usersQuery);
+  const [usersData, setUsersData] = useState<DocumentData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Real Firestore Query for top users
+    const usersQuery = query(
+      collection(db, 'users'),
+      orderBy('skillScore', 'desc'),
+      limit(50)
+    );
+
+    // Standard Firestore SDK listener
+    const unsubscribe = onSnapshot(usersQuery, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({
+        uid: doc.id,
+        ...doc.data()
+      }));
+      setUsersData(data);
+      setLoading(false);
+    }, (error) => {
+      console.error("Leaderboard fetch error:", error);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   if (loading) {
     return (
@@ -44,7 +60,6 @@ export default function LeaderboardPage() {
     );
   }
 
-  // Fallback or empty state
   const rankings = usersData || [];
   const top3 = rankings.slice(0, 3);
   const others = rankings.slice(3);
