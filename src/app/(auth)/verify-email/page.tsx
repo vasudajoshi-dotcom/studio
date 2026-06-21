@@ -11,7 +11,7 @@ import { Mail, RefreshCw, LogOut, CheckCircle2, Loader2 } from 'lucide-react';
 import { auth } from '@/lib/firebase';
 
 export default function VerifyEmailPage() {
-  const { user, logout, loading: authLoading } = useAuth();
+  const { user, logout, loading: authLoading, refreshUser } = useAuth();
   const [resending, setResending] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
@@ -26,20 +26,20 @@ export default function VerifyEmailPage() {
   const handleResend = async () => {
     if (!auth.currentUser) return;
     setResending(true);
+    console.log("Resending verification email to:", auth.currentUser.email);
     try {
-      console.log("Resending verification email...");
       await sendEmailVerification(auth.currentUser);
       console.log("Resend successful.");
       toast({
         title: "Email Sent",
-        description: "A new verification link has been sent. Please check your inbox.",
+        description: "A new verification link has been sent. Please check your inbox, spam, and folders.",
       });
     } catch (error: any) {
       console.error("Resend failure:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to resend email.",
       });
     } finally {
       setResending(false);
@@ -49,9 +49,9 @@ export default function VerifyEmailPage() {
   const handleRefresh = async () => {
     if (!auth.currentUser) return;
     setRefreshing(true);
+    console.log("Refreshing user verification status...");
     try {
-      console.log("Refreshing user status...");
-      await reload(auth.currentUser);
+      await refreshUser();
       console.log("User reloaded. Email verified:", auth.currentUser.emailVerified);
       
       if (auth.currentUser.emailVerified) {
@@ -63,7 +63,7 @@ export default function VerifyEmailPage() {
       } else {
         toast({
           title: "Not Yet Verified",
-          description: "Please click the link in your email first.",
+          description: "Please click the link in your email first. Check your spam folder if you don't see it.",
         });
       }
     } catch (error: any) {
@@ -71,14 +71,18 @@ export default function VerifyEmailPage() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to refresh status.",
+        description: "Failed to refresh status. Please try again.",
       });
     } finally {
       setRefreshing(false);
     }
   };
 
-  if (authLoading) return null;
+  if (authLoading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <Loader2 className="h-8 w-8 animate-spin text-accent" />
+    </div>
+  );
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
@@ -97,8 +101,8 @@ export default function VerifyEmailPage() {
         <CardContent className="space-y-6 pt-4 text-center">
           <div className="bg-muted/50 p-6 rounded-2xl flex flex-col items-center gap-4">
             <CheckCircle2 className="h-10 w-10 text-green-500" />
-            <p className="text-sm text-muted-foreground">
-              Please click the link in the email to activate your account.
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Please click the link in the email to activate your account. If you don't see it, check your spam or promotions folder.
             </p>
           </div>
           
@@ -119,7 +123,7 @@ export default function VerifyEmailPage() {
               disabled={resending}
             >
               {resending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              Resend email
+              Resend verification email
             </Button>
           </div>
         </CardContent>

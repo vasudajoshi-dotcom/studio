@@ -41,6 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const refreshUser = async () => {
     if (auth.currentUser) {
+      console.log("Refreshing Auth User...");
       await reload(auth.currentUser);
       setUser({ ...auth.currentUser });
     }
@@ -56,13 +57,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.time("Profile-Fetch");
         const profileRef = doc(db, 'users', currentUser.uid);
         
-        // Use a timeout to ensure we don't block indefinitely on profile fetch
+        // Ensure the loading state is resolved even if profile fetch is slow
         const profileTimeout = setTimeout(() => {
           if (loading) {
-            console.warn("Profile fetch took too long, using fallback.");
+            console.warn("Profile fetch timeout, proceeding with Auth defaults.");
             setLoading(false);
           }
-        }, 3000);
+        }, 5000);
 
         const unsubscribeProfile = onSnapshot(profileRef, (docSnap) => {
           clearTimeout(profileTimeout);
@@ -71,8 +72,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           if (docSnap.exists()) {
             setProfile(docSnap.data() as UserProfile);
           } else {
-            console.log("No Firestore profile found, using Auth defaults.");
-            // Create a temporary profile object from Auth data
+            console.log("No Firestore profile found, fallback to Auth data.");
             setProfile({
               fullName: currentUser.displayName || 'Professional',
               email: currentUser.email || '',
@@ -85,15 +85,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
           setLoading(false);
         }, (error) => {
-          console.error("Firestore listener error:", error);
+          console.error("Firestore Profile Error:", error);
           clearTimeout(profileTimeout);
           setLoading(false);
         });
 
-        // Basic redirect logic: If on landing, login or signup, go to dashboard
+        // Basic non-blocking redirect
         const publicPaths = ['/login', '/signup', '/reset-password', '/'];
         if (publicPaths.includes(pathname) && pathname !== '/') {
-           console.log("Redirecting to dashboard...");
            router.push('/dashboard');
         }
 
@@ -104,7 +103,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         const publicPaths = ['/login', '/signup', '/reset-password', '/'];
         if (!publicPaths.includes(pathname)) {
-          console.log("Unauthenticated access to protected route, redirecting to login.");
           router.push('/login');
         }
       }
@@ -118,7 +116,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.push('/login');
   };
 
-  // Prevent blank screen by always rendering a fallback loader if loading takes too long
   return (
     <AuthContext.Provider value={{ user, profile, loading, logout, refreshUser }}>
       {children}
