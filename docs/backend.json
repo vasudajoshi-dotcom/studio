@@ -1,0 +1,120 @@
+
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Detailed professional and educational profile for SkillSphere AI users.",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "college": { "type": "string" },
+        "university": { "type": "string" },
+        "degree": { "type": "string" },
+        "branch": { "type": "string" },
+        "skills": { "type": "array", "items": { "type": "string" } },
+        "interests": { "type": "array", "items": { "type": "string" } },
+        "experience": { "type": "string" },
+        "projects": { "type": "string" },
+        "certifications": { "type": "array", "items": { "type": "string" } },
+        "achievements": { "type": "array", "items": { "type": "string" } },
+        "creditPoints": { "type": "number", "default": 0 },
+        "skillScore": { "type": "number", "default": 0 },
+        "portfolioLink": { "type": "string" },
+        "githubProfile": { "type": "string" },
+        "linkedinProfile": { "type": "string" },
+        "isInstructor": { "type": "boolean", "default": false },
+        "emailVerified": { "type": "boolean", "default": false }
+      },
+      "required": ["fullName", "email"]
+    },
+    "Course": {
+      "title": "Course",
+      "description": "Educational course metadata.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "instructorId": { "type": "string" },
+        "category": { "type": "string" },
+        "thumbnail": { "type": "string" },
+        "price": { "type": "string" },
+        "enrolledCount": { "type": "number", "default": 0 },
+        "rating": { "type": "number", "default": 0 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Quiz": {
+      "title": "Quiz",
+      "description": "Assessment data including questions and timing.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "courseId": { "type": "string" },
+        "timeLimit": { "type": "number" },
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "question": { "type": "string" },
+              "options": { "type": "array", "items": { "type": "string" } },
+              "correctAnswer": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "Connection": {
+      "title": "Networking Connection",
+      "description": "Represents a connection between two users.",
+      "type": "object",
+      "properties": {
+        "requesterId": { "type": "string" },
+        "receiverId": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "In-app notification for various activities.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "type": { "type": "string", "enum": ["connection_request", "course_update", "quiz_result", "message"] },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "read": { "type": "boolean", "default": false },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "auth": {
+    "providers": ["email"]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Stores user profile data."
+    },
+    "/courses/{courseId}": {
+      "schema": "Course",
+      "description": "Stores course catalog details."
+    },
+    "/quizzes/{quizId}": {
+      "schema": "Quiz",
+      "description": "Stores assessment data."
+    },
+    "/connections/{connectionId}": {
+      "schema": "Connection",
+      "description": "Stores networking connection states."
+    },
+    "/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "Stores user notifications."
+    }
+  }
+}
