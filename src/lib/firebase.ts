@@ -12,17 +12,14 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Comprehensive validation for client-side debugging
+// Check for missing keys
 const missingKeys = Object.entries(firebaseConfig)
   .filter(([_, value]) => !value || value.trim() === '')
   .map(([key]) => key);
 
-const isConfigValid = missingKeys.length === 0;
-
 if (typeof window !== 'undefined') {
-  if (!isConfigValid) {
-    console.error("🔥 Firebase configuration is missing the following keys:", missingKeys);
-    console.warn("Please check your .env file and ensure variables are prefixed with NEXT_PUBLIC_");
+  if (missingKeys.length > 0) {
+    console.error("🔥 Firebase configuration is missing keys:", missingKeys);
   } else {
     console.log("✅ Firebase initialized successfully with Project ID:", firebaseConfig.projectId);
   }
@@ -33,4 +30,4 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-export { auth, db, storage, isConfigValid };
+export { auth, db, storage };

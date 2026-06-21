@@ -13,6 +13,7 @@ interface UserProfile extends DocumentData {
   skillScore: number;
   isInstructor: boolean;
   emailVerified: boolean;
+  photoURL?: string;
 }
 
 interface AuthContextType {

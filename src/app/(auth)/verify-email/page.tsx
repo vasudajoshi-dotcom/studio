@@ -32,7 +32,7 @@ export default function VerifyEmailPage() {
       console.log("Resend successful.");
       toast({
         title: "Email Sent",
-        description: "A new verification link has been sent. Please check your inbox, spam, and other folders.",
+        description: "A new verification link has been sent. Please check your inbox.",
       });
     } catch (error: any) {
       console.error("Resend failure:", error);
@@ -63,7 +63,7 @@ export default function VerifyEmailPage() {
       } else {
         toast({
           title: "Not Yet Verified",
-          description: "We haven't detected your verification yet. Please click the link in the email.",
+          description: "Please click the link in your email first.",
         });
       }
     } catch (error: any) {
@@ -71,7 +71,7 @@ export default function VerifyEmailPage() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to refresh status. Please try again.",
+        description: "Failed to refresh status.",
       });
     } finally {
       setRefreshing(false);
@@ -91,14 +91,14 @@ export default function VerifyEmailPage() {
           </div>
           <CardTitle className="text-2xl font-headline font-bold">Verify Your Email</CardTitle>
           <CardDescription>
-            We've sent a verification link to <span className="font-semibold text-primary">{user?.email || auth.currentUser?.email}</span>
+            We've sent a link to <span className="font-semibold text-primary">{user?.email || auth.currentUser?.email}</span>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 pt-4 text-center">
           <div className="bg-muted/50 p-6 rounded-2xl flex flex-col items-center gap-4">
             <CheckCircle2 className="h-10 w-10 text-green-500" />
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              To start using SkillSphere AI and access your career roadmap, please click the link in the email we just sent you.
+            <p className="text-sm text-muted-foreground">
+              Please click the link in the email to activate your account.
             </p>
           </div>
           
@@ -114,18 +114,18 @@ export default function VerifyEmailPage() {
             </Button>
             <Button 
               variant="ghost" 
-              className="w-full gap-2 text-muted-foreground hover:text-secondary h-11" 
+              className="w-full gap-2 text-muted-foreground h-11" 
               onClick={handleResend}
               disabled={resending}
             >
               {resending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              Resend verification email
+              Resend email
             </Button>
           </div>
         </CardContent>
         <CardFooter className="flex justify-center border-t pt-6">
           <Button variant="link" className="text-destructive gap-2 h-auto p-0" onClick={logout}>
-            <LogOut className="h-4 w-4" /> Sign out and use a different email
+            <LogOut className="h-4 w-4" /> Sign out
           </Button>
         </CardFooter>
       </Card>

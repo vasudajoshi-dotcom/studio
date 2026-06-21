@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -12,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
-import { Rocket, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Rocket, Loader2, Eye, EyeOff } from 'lucide-react';
 
 export default function SignupPage() {
   const [name, setName] = useState('');
@@ -47,8 +46,8 @@ export default function SignupPage() {
         emailVerified: false,
       });
       
+      console.log("Sending verification email...");
       try {
-        console.log("Sending verification email...");
         await sendEmailVerification(user);
         console.log("Verification email sent successfully.");
         toast({
@@ -131,27 +130,18 @@ export default function SignupPage() {
                   className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-muted-foreground" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full font-semibold h-11" disabled={loading}>
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating account...
-                </>
-              ) : "Sign Up"}
+              {loading ? <Loader2 className="animate-spin" /> : "Sign Up"}
             </Button>
             <p className="text-sm text-center text-muted-foreground">
               Already have an account?{" "}
-              <Link href="/login" id="login-link" className="text-secondary font-medium hover:underline transition-colors">Login</Link>
+              <Link href="/login" className="text-secondary font-medium hover:underline">Login</Link>
             </p>
           </CardFooter>
         </form>

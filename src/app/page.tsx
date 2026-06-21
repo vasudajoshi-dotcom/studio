@@ -3,7 +3,7 @@
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Rocket, Sparkles, Zap, Target, Award, Users, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { Rocket, Sparkles, Zap, Target, Award, Users, ArrowRight, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
@@ -111,73 +111,17 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Social Proof / Call to Action */}
-      <section className="py-32 relative overflow-hidden">
-        <div className="container px-4 mx-auto relative z-10">
-          <div className="bg-primary rounded-[3rem] p-12 md:p-24 text-white text-center space-y-10 relative overflow-hidden shadow-2xl">
-            <div className="absolute inset-0 ai-gradient opacity-40" />
-            <div className="relative z-10 max-w-3xl mx-auto space-y-8">
-              <h2 className="text-4xl md:text-7xl font-headline font-bold leading-tight">Ready to join the future of work?</h2>
-              <p className="text-xl md:text-2xl text-primary-foreground/80 leading-relaxed">
-                Join thousands of professionals already accelerating their careers with SkillSphere AI.
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                <Link href="/signup">
-                  <Button size="lg" className="h-16 px-12 text-lg font-bold bg-white text-primary hover:bg-white/90 shadow-xl">
-                    Create Free Account
-                  </Button>
-                </Link>
-                <div className="flex flex-col items-center gap-2">
-                  <div className="flex gap-1">
-                    {[1,2,3,4,5].map(i => <Sparkles key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />)}
-                  </div>
-                  <span className="text-sm font-bold text-white/60">4.9/5 Trust Score</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="py-20 border-t bg-muted/20">
         <div className="container px-4 mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-            <div className="col-span-2 space-y-6">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 ai-gradient rounded-xl flex items-center justify-center shadow-lg">
-                  <Rocket className="text-white h-6 w-6" />
-                </div>
-                <span className="text-2xl font-headline font-bold">SkillSphere AI</span>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 ai-gradient rounded-xl flex items-center justify-center shadow-lg">
+                <Rocket className="text-white h-6 w-6" />
               </div>
-              <p className="text-muted-foreground max-w-sm">
-                Empowering the next generation of digital professionals through AI-driven education and networking.
-              </p>
+              <span className="text-2xl font-headline font-bold">SkillSphere AI</span>
             </div>
-            <div className="space-y-4">
-              <h4 className="font-bold">Platform</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="#" className="hover:text-primary transition-colors">Career Roadmaps</Link></li>
-                <li><Link href="#" className="hover:text-primary transition-colors">Skill Assessments</Link></li>
-                <li><Link href="#" className="hover:text-primary transition-colors">Course Marketplace</Link></li>
-              </ul>
-            </div>
-            <div className="space-y-4">
-              <h4 className="font-bold">Company</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="#" className="hover:text-primary transition-colors">About Us</Link></li>
-                <li><Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
-                <li><Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-12 border-t">
             <p className="text-sm text-muted-foreground">© 2024 SkillSphere AI. All rights reserved.</p>
-            <div className="flex gap-8">
-              <Link href="#" className="text-muted-foreground hover:text-primary"><Users className="h-5 w-5" /></Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary"><Target className="h-5 w-5" /></Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary"><Award className="h-5 w-5" /></Link>
-            </div>
           </div>
         </div>
       </footer>
