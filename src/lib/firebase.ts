@@ -12,11 +12,20 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Validate config presence
-const isConfigValid = !!firebaseConfig.apiKey && firebaseConfig.apiKey.length > 10;
+// Comprehensive validation for client-side debugging
+const missingKeys = Object.entries(firebaseConfig)
+  .filter(([_, value]) => !value || value.trim() === '')
+  .map(([key]) => key);
 
-if (!isConfigValid && typeof window !== 'undefined') {
-  console.warn("Firebase configuration is incomplete. Please ensure environment variables are loaded.");
+const isConfigValid = missingKeys.length === 0;
+
+if (typeof window !== 'undefined') {
+  if (!isConfigValid) {
+    console.error("🔥 Firebase configuration is missing the following keys:", missingKeys);
+    console.warn("Please check your .env file and ensure variables are prefixed with NEXT_PUBLIC_");
+  } else {
+    console.log("✅ Firebase initialized successfully with Project ID:", firebaseConfig.projectId);
+  }
 }
 
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
